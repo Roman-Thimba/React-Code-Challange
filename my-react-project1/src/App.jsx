@@ -1,4 +1,3 @@
-// src/App.jsx
 import { useState, useEffect } from 'react';
 import AddGoalForm from './components/AddGoalForm';
 import GoalList from './components/GoalList';
@@ -9,21 +8,22 @@ function App() {
 
   // Fetch goals on load
   useEffect(() => {
-    fetch('http://localhost:3001/]goals')
+    fetch('http://localhost:3001/goals')
       .then(res => res.json())
       .then(data => setGoals(data))
       .catch(err => console.error('Error fetching goals:', err));
   }, []);
 
-  // new goal
+  // Add new goal
   const addGoal = (goalData) => {
     fetch('http://localhost:3001/goals', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(goalData)
+      body: JSON.stringify(goalData),
     })
       .then(res => res.json())
-      .then(newGoal => setGoals([...goals, newGoal]));
+      .then(newGoal => setGoals(prevGoals => [...prevGoals, newGoal]))
+      .catch(err => console.error('Error adding goal:', err));
   };
 
   // Update goal
@@ -31,20 +31,24 @@ function App() {
     fetch(`http://localhost:3001/goals/${id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(updates)
+      body: JSON.stringify(updates),
     })
       .then(res => res.json())
       .then(updatedGoal => {
-        setGoals(goals.map(goal => goal.id === id ? updatedGoal : goal));
-      });
+        setGoals(prevGoals =>
+          prevGoals.map(goal => (goal.id === id ? updatedGoal : goal))
+        );
+      })
+      .catch(err => console.error('Error updating goal:', err));
   };
 
   // Delete goal
   const deleteGoal = (id) => {
     fetch(`http://localhost:3001/goals/${id}`, { method: 'DELETE' })
       .then(() => {
-        setGoals(goals.filter(goal => goal.id !== id));
-      });
+        setGoals(prevGoals => prevGoals.filter(goal => goal.id !== id));
+      })
+      .catch(err => console.error('Error deleting goal:', err));
   };
 
   return (
@@ -58,3 +62,4 @@ function App() {
 }
 
 export default App;
+
