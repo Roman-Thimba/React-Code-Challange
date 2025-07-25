@@ -1,3 +1,4 @@
+// src/components/GoalList.jsx
 import GoalItem from './GoalItem';
 
 function GoalList({ goals, onUpdateGoal, onDeleteGoal }) {
@@ -17,3 +18,4 @@ function GoalList({ goals, onUpdateGoal, onDeleteGoal }) {
 }
 
 export default GoalList;
+;

@@ -1,22 +1,16 @@
+// src/components/GoalItem.jsx
 import { useState } from 'react';
 
 function GoalItem({ goal, onUpdateGoal, onDeleteGoal }) {
   const [depositAmount, setDepositAmount] = useState('');
 
   const handleDeposit = () => {
-    const deposit = parseFloat(depositAmount);
-    if (isNaN(deposit) || deposit <= 0) {
-      return; // Optionally, show an error message to the user
-    }
-    const currentSaved = parseFloat(goal.savedAmount) || 0;
-    const newSavedAmount = currentSaved + deposit;
+    const newSavedAmount = parseFloat(goal.savedAmount) + parseFloat(depositAmount);
     onUpdateGoal(goal.id, { savedAmount: newSavedAmount });
     setDepositAmount('');
   };
 
-  const progressPercent = goal.targetAmount
-    ? Math.min(((parseFloat(goal.savedAmount) || 0) / parseFloat(goal.targetAmount)) * 100, 100).toFixed(1)
-    : 0;
+  const progressPercent = Math.min((goal.savedAmount / goal.targetAmount) * 100, 100).toFixed(1);
 
   return (
     <div className="border rounded p-3 shadow bg-white">
