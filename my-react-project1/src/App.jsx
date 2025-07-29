@@ -12,7 +12,7 @@ function App() {
   });
 
   useEffect(() => {
-    fetch('http://localhost:3001/goals')
+    fetch('http://localhost:3000/goals')
       .then((res) => res.json())
       .then(setGoals)
       .catch((err) => console.error('Error fetching goals:', err));
@@ -35,7 +35,7 @@ function App() {
         : [],
     };
 
-    fetch('http://localhost:3001/goals', {
+    fetch('http://localhost:3000/goals', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(goalToAdd),
@@ -60,7 +60,7 @@ function App() {
       savedAmount: goal.savedAmount + parseFloat(amount),
     };
 
-    fetch(`http://localhost:3001/goals/${goalId}`, {
+    fetch(`http://localhost:3000/goals/${goalId}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(updatedGoal),
@@ -74,6 +74,9 @@ function App() {
   const filteredGoals = goals.filter((goal) =>
     goal.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  
+
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-100 text-gray-800">

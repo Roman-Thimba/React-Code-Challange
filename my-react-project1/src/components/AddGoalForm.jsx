@@ -1,69 +1,54 @@
+const handleAddGoal = async (e) => {
+  e.preventDefault();
 
-// src/components/AddGoalForm.jsx
-import { useState } from 'react';
+  const { name, category, deadline, targetAmount, deliverables } = newGoal;
 
-function AddGoalForm({ onAddGoal }) {
-  const [name, setName] = useState('');
-  const [targetAmount, setTargetAmount] = useState('');
-  const [category, setCategory] = useState('');
-  const [deadline, setDeadline] = useState('');
+  if (!name || !category || !deadline || !targetAmount) {
+    alert("Please fill out all required fields.");
+    return;
+  }
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const newGoal = {
-      name,
-      targetAmount: parseFloat(targetAmount),
-      savedAmount: 0,
-      category,
-      deadline,
-      createdAt: new Date().toISOString().split('T')[0]
-    };
-    onAddGoal(newGoal);
-    setName('');
-    setTargetAmount('');
-    setCategory('');
-    setDeadline('');
+  const parsedAmount = parseFloat(targetAmount);
+  if (isNaN(parsedAmount) || parsedAmount <= 0) {
+    alert("Please enter a valid target amount.");
+    return;
+  }
+
+  const goalToAdd = {
+    name: name.trim(),
+    category: category.trim(),
+    deadline,
+    targetAmount: parsedAmount,
+    savedAmount: 0,
+    deliverables: deliverables
+      ? deliverables.split(',').map((d) => d.trim()).filter(Boolean)
+      : [],
   };
 
-  return (
-    <form onSubmit={handleSubmit} className="bg-white shadow rounded p-4 mb-4 space-y-2">
-      <h2 className="text-xl font-semibold">Add New Goal</h2>
-      <input
-        type="text"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        placeholder="Goal Name"
-        className="border p-2 w-full rounded"
-        required
-      />
-      <input
-        type="number"
-        value={targetAmount}
-        onChange={(e) => setTargetAmount(e.target.value)}
-        placeholder="Target Amount"
-        className="border p-2 w-full rounded"
-        required
-      />
-      <input
-        type="text"
-        value={category}
-        onChange={(e) => setCategory(e.target.value)}
-        placeholder="Category"
-        className="border p-2 w-full rounded"
-        required
-      />
-      <input
-        type="date"
-        value={deadline}
-        onChange={(e) => setDeadline(e.target.value)}
-        className="border p-2 w-full rounded"
-        required
-      />
-      <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-        Add Goal
-      </button>
-    </form>
-  );
-}
+  try {
+    const res = await fetch('http://localhost:3001/goals', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(goalToAdd),
+    });
 
-export default AddGoalForm;
+    if (!res.ok) {
+      throw new Error('Failed to add goal.');
+    }
+
+    const data = await res.json();
+    setGoals((prevGoals) => [...prevGoals, data]);
+
+    // Clear form
+    setNewGoal({
+      name: '',
+      category: '',
+      deadline: '',
+      targetAmount: '',
+      deliverables: '',
+    });
+  } catch (error) {
+    console.error('Error adding goal:', error);
+    alert('Failed to add goal. Please check your server or inputs.');
+  }
+};

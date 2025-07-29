@@ -1,4 +1,4 @@
-// src/components/GoalItem.jsx
+
 import { useState } from 'react';
 
 function GoalItem({ goal, onUpdateGoal, onDeleteGoal }) {

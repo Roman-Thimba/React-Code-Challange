@@ -1,4 +1,4 @@
-// src/components/Overview.jsx
+
 function Overview({ goals }) {
   const totalGoals = goals.length;
   const totalSaved = goals.reduce((sum, g) => sum + g.savedAmount, 0);
